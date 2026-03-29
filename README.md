@@ -1,6 +1,6 @@
 # Tejidos-aldany
 
 Integrantes: 
-osmed antonio Padilla Oyola
+osmer antonio Padilla Oyola
 Stefany Builes Lopera
 Leidy Daihana Mora Trujillo
