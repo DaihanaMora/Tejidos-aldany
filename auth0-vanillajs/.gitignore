@@ -1,0 +1,9 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (¡Muy importante por seguridad!)
+.env
+
+# Archivos de log y compilación
+npm-debug.log*
+dist/
