@@ -64,7 +64,21 @@ async function updateUI() {
     showError(err.message);
   }
 }
+const signupBtn = document.getElementById('signup-btn');
 
+async function signup() {
+  try {
+    await auth0Client.loginWithRedirect({
+      authorizationParams: {
+        screen_hint: 'signup', // Esto le dice a Auth0: "Muestra el registro"
+      }
+    });
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+signupBtn.addEventListener('click', signup);
 // Display user profile
 async function displayProfile() {
   try {
