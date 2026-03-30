@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completar Perfil - Tejidos Aldany</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #0a0a0f;">
+    
+    <div class="main-card-wrapper" style="max-width: 450px; padding: 2.5rem; border: 1px solid #2d313c; background: #1a1e27; border-radius: 15px;">
+        <h2 class="main-title" style="opacity: 1; margin-bottom: 0.5rem; color: #00ff88; text-align: center;">
+            ¡Hola, <span id="user-name">Usuario</span>!
+        </h2>
+        <h3 style="color: #fff; margin-bottom: 1.5rem; font-size: 1.1rem; text-align: center;">Datos de Identificación</h3>
+        
+        <p style="color: #a0aec0; text-align: center; margin-bottom: 2rem; font-size: 0.9rem;">
+            Para continuar a la plataforma de pedidos, por favor ingresa tu documento.
+        </p>
+
+        <form id="form-documento" method="POST">
+            <div style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+                
+                <div style="text-align: left;">
+                    <label style="font-size: 0.8rem; color: #718096;">Tipo de Documento</label>
+                    <select name="tipo_doc" required 
+                        style="width: 100%; padding: 12px; background: #0a0a0f; border: 1px solid #4a5568; color: white; border-radius: 10px; margin-top: 5px;">
+                        <option value="CC">Cédula de Ciudadanía (CC)</option>
+                        <option value="CE">Cédula de Extranjería (CE)</option>
+                        <option value="NIT">NIT</option>
+                        <option value="PP">Pasaporte</option>
+                    </select>
+                </div>
+
+                <div style="text-align: left;">
+                    <label style="font-size: 0.8rem; color: #718096;">Número de Documento</label>
+                    <input type="text" name="num_doc" placeholder="Ej: 10203040" required
+                        style="width: 100%; padding: 12px; background: #0a0a0f; border: 1px solid #4a5568; color: white; border-radius: 10px; margin-top: 5px;">
+                </div>
+
+                <button type="submit" class="button login" style="width: 100%; margin-top: 10px; cursor: pointer;">
+                    FINALIZAR REGISTRO
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const state = urlParams.get('state');
+    const sessionToken = urlParams.get('session_token');
+
+    if (sessionToken && state) {
+        try {
+            // Decodificar el nombre de Pepito
+            const base64Url = sessionToken.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(window.atob(base64));
+
+            document.getElementById('user-name').innerText = payload.preferred_name || "Usuario";
+            
+            // Construir URL de retorno segura
+            let auth0Domain = payload.iss; 
+            if (!auth0Domain.endsWith('/')) auth0Domain += '/';
+            
+            const form = document.getElementById('form-documento');
+            // Enviamos los datos directamente a Auth0 para que se ejecute onContinuePostLogin
+            form.action = `${auth0Domain}continue?state=${state}`;
+            
+            console.log("Destino de guardado:", form.action);
+        } catch (e) { 
+            console.error("Error en la sesión:", e); 
+        }
+    } else {
+        console.error("Faltan parámetros de Auth0 (state o token).");
+    }
+</script>
+</body>
+</html>

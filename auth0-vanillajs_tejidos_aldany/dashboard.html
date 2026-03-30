@@ -1,0 +1,41 @@
+<div id="admin-panel" style="display:none; padding: 20px;">
+    <h2 style="color: #00ff88;">Panel de Administración de Base de Datos</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <section style="background: #1a1e27; padding: 15px; border-radius: 8px;">
+            <h3>Gestionar Usuarios (PostgreSQL)</h3>
+            <input type="text" id="u_nombre" placeholder="Nombre completo">
+            <select id="u_rol">
+                <option value="Oficina">Oficina</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Tejedor">Tejedor</option>
+            </select>
+            <button onclick="apiPost('usuarios', {Nombre: u_nombre.value, Rol: u_rol.value})">Registrar Usuario</button>
+        </section>
+
+        <section style="background: #1a1e27; padding: 15px; border-radius: 8px;">
+            <h3>Gestionar Clientes (PostgreSQL)</h3>
+            <input type="text" id="c_nombre" placeholder="Nombre del Cliente">
+            <input type="text" id="c_contacto" placeholder="Contacto (Email/Tel)">
+            <button onclick="apiPost('clientes', {nombre: c_nombre.value, contacto: c_contacto.value})">Registrar Cliente</button>
+        </section>
+    </div>
+</div>
+
+<script>
+    // Lógica de Auth0 para mostrar el panel
+    auth0.isAuthenticated().then(isAuth => {
+        if(isAuth) {
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+    });
+
+    async function apiPost(endpoint, data) {
+        const response = await fetch(`http://localhost:3000/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if(response.ok) alert("Dato guardado ffb404ddd980 ✅");
+    }
+</script>
