@@ -16,5 +16,5 @@
       query: { session_token: sessionToken }
     });
   }
-};
+
 
