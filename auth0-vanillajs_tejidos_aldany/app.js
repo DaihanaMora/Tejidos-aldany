@@ -8,7 +8,7 @@ const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
 
 let auth0Client;
-const LOGO_PATH = './imgs/logo.png'; 
+const LOGO_PATH = './imgs/logo.png';
 const API_URL = 'http://localhost:3000/api';
 
 async function initAuth0() {
@@ -17,8 +17,8 @@ async function initAuth0() {
     auth0Client = await createAuth0Client({
       domain: import.meta.env.VITE_AUTH0_DOMAIN,
       clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-      authorizationParams: { 
-        redirect_uri: window.location.origin 
+      authorizationParams: {
+        redirect_uri: window.location.origin
       }
     });
 
@@ -49,7 +49,7 @@ async function renderDashboard() {
   const user = await auth0Client.getUser();
   const nombreUsuario = user.name || user.nickname || "Admin";
   const iniciales = nombreUsuario.substring(0, 2).toUpperCase();
-  
+
   const avatarHtml = user.picture && !user.picture.includes('gravatar')
     ? `<img src="${user.picture}" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #00ff88;">`
     : `<div style="width: 45px; height: 45px; border-radius: 50%; background: #00ff88; color: #1a1e27; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid #fff;">${iniciales}</div>`;
@@ -116,8 +116,8 @@ async function renderDashboard() {
 
   // Listener de Logout (reinstalado)
   document.getElementById('logout-btn').addEventListener('click', () => {
-    auth0Client.logout({ 
-      logoutParams: { returnTo: window.location.origin } 
+    auth0Client.logout({
+      logoutParams: { returnTo: window.location.origin }
     });
   });
 
@@ -136,8 +136,8 @@ async function saveToPostgres(endpoint, data) {
     if (response.ok) {
       alert(`¡Éxito! Registro guardado en la base de datos de Tejidos Aldany ✅`);
       actualizarVistaPrevia();
-      if(endpoint === 'usuarios') document.getElementById('db-user-name').value = '';
-      if(endpoint === 'clientes') {
+      if (endpoint === 'usuarios') document.getElementById('db-user-name').value = '';
+      if (endpoint === 'clientes') {
         document.getElementById('db-client-name').value = '';
         document.getElementById('db-client-contact').value = '';
       }
@@ -147,69 +147,103 @@ async function saveToPostgres(endpoint, data) {
     alert("Revisa que el servidor Node (puerto 3000) esté corriendo.");
   }
 }
-
 async function actualizarVistaPrevia() {
-    const preview = document.getElementById('db-preview');
-    try {
-        // 1. Cargamos ambos datos en paralelo
-        const [resU, resC] = await Promise.all([
-            fetch(`${API_URL}/usuarios`),
-            fetch(`${API_URL}/clientes`)
-        ]);
+  const preview = document.getElementById('db-preview');
+  try {
+    // 1. Cargamos ambos datos en paralelo
+    const [resU, resC] = await Promise.all([
+      fetch(`${API_URL}/usuarios`),
+      fetch(`${API_URL}/clientes`)
+    ]);
+
+    const users = await resU.json();
+    const clients = await resC.json();
+
+    // 2. Construimos el resumen de conteo inicial
+    let html = `
+        <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed #2d313c;">
+            <p><strong>Resumen:</strong> Usuarios: ${users.length} | Clientes: ${clients.length}</p>
+        </div>
         
-        const users = await resU.json();
-        const clients = await resC.json();
+        <h4 style="color: #00ff88; margin-bottom: 10px;">Gestión de Usuarios</h4>
+        <table style="width: 100%; color: white; border-collapse: collapse; margin-bottom: 2rem;">
+            <thead>
+                <tr style="border-bottom: 1px solid #4a5568; text-align: left; font-size: 0.85rem; color: #a0aec0;">
+                    <th style="padding: 10px;">Nombre</th>
+                    <th style="padding: 10px;">Rol</th>
+                    <th style="padding: 10px; text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-        // 2. Construimos el resumen de conteo
-        let html = `
-            <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed #2d313c;">
-                <p><strong>Resumen:</strong> Usuarios: ${users.length} | Clientes: ${clients.length}</p>
-            </div>
-            
-            <h4 style="color: #00ff88; margin-bottom: 10px;">Gestión de Usuarios</h4>
-            <table style="width: 100%; color: white; border-collapse: collapse;">
-                <thead>
-                    <tr style="border-bottom: 1px solid #4a5568; text-align: left; font-size: 0.85rem; color: #a0aec0;">
-                        <th style="padding: 10px;">Nombre</th>
-                        <th style="padding: 10px;">Rol</th>
-                        <th style="padding: 10px; text-align: center;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-        // 3. Generamos las filas de la tabla de usuarios
-        if (users.length === 0) {
-            html += `<tr><td colspan="3" style="padding: 20px; text-align: center; color: #718096;">No hay usuarios registrados</td></tr>`;
-        } else {
-            users.forEach(user => {
-              const nombre = user.nombre || user.Nombre || 'Sin nombre';
-              const rol = user.rol || user.Rol || 'Sin rol';
-              const id = user.idusuario || user.idUsuario || user.id;
-
-                html += `
-                    <tr style="border-bottom: 1px solid #2d313c;">
-                        <td style="padding: 10px;">${nombre}</td>
-                        <td style="padding: 10px;"><span style="color: #00ff88;">${rol}</span></td>
-                        <td style="padding: 10px; text-align: center;">
-                            <button onclick="window.eliminarRegistro('usuarios', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
-                            <button onclick="window.editarRegistro('usuarios', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
-                        </td>
-                    </tr>`;
-            });
-        }
+    // Generamos filas de Usuarios
+    if (users.length === 0) {
+      html += `<tr><td colspan="3" style="padding: 20px; text-align: center; color: #718096;">No hay usuarios registrados</td></tr>`;
+    } else {
+      users.forEach(user => {
+        const nombre = user.nombre || user.Nombre || 'Sin nombre';
+        const rol = user.rol || user.Rol || 'Sin rol';
+        const id = user.idusuario || user.idUsuario || user.id;
 
         html += `
-                </tbody>
-            </table>
-            <p style="margin-top: 15px; color: #00ff88; font-size: 0.75rem; text-align: right;">📍 BD: tejidos_aldany_db</p>
-        `;
-        
-        preview.innerHTML = html;
-    } catch (e) {
-        console.error("Error en vista previa:", e);
-        preview.innerHTML = `<span style="color: #fc8181;">⚠️ Error: Servidor CRUD no detectado.</span>`;
+            <tr style="border-bottom: 1px solid #2d313c;">
+                <td style="padding: 10px;">${nombre}</td>
+                <td style="padding: 10px;"><span style="color: #00ff88;">${rol}</span></td>
+                <td style="padding: 10px; text-align: center;">
+                    <button onclick="window.eliminarRegistro('usuarios', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
+                    <button onclick="window.editarRegistro('usuarios', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
+                </td>
+            </tr>`;
+      });
     }
+
+    html += `</tbody></table>`;
+
+    html += `
+        <h4 style="color: #00ff88; margin-bottom: 10px;">Gestión de Clientes</h4>
+        <table style="width: 100%; color: white; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid #4a5568; text-align: left; font-size: 0.85rem; color: #a0aec0;">
+                    <th style="padding: 10px;">Nombre / Empresa</th>
+                    <th style="padding: 10px;">Contacto</th>
+                    <th style="padding: 10px; text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    if (clients.length === 0) {
+      html += `<tr><td colspan="3" style="padding: 20px; text-align: center; color: #718096;">No hay clientes registrados</td></tr>`;
+    } else {
+      clients.forEach(client => {
+        const nombre = client.nombre || client.nombre_cliente || 'Sin nombre';
+        const contacto = client.telefono || client.email || 'Sin contacto';
+        const id = client.idcliente || client.id_cliente || client.id;
+
+        html += `
+            <tr style="border-bottom: 1px solid #2d313c;">
+                <td style="padding: 10px;">${nombre}</td>
+                <td style="padding: 10px;"><span style="color: #00ff88;">${contacto}</span></td>
+                <td style="padding: 10px; text-align: center;">
+                    <button onclick="window.eliminarRegistro('clientes', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
+                    <button onclick="window.editarRegistro('clientes', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
+                </td>
+            </tr>`;
+      });
+    }
+
+    html += `
+            </tbody>
+        </table>
+        <p style="margin-top: 25px; color: #00ff88; font-size: 0.75rem; text-align: right;"> BD: tejidos_aldany_db</p>
+    `;
+
+    preview.innerHTML = html;
+  } catch (e) {
+    console.error("Error en vista previa:", e);
+    preview.innerHTML = `<span style="color: #fc8181;">⚠️ Error: Servidor CRUD no detectado.</span>`;
+  }
 }
+
 
 // --- Auth Helpers ---
 const login = async () => await auth0Client.loginWithRedirect();
