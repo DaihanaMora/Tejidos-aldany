@@ -211,6 +211,30 @@ async function actualizarVistaPrevia() {
     }
 }
 
+// --- FUNCIONES GLOBALES PARA TEJIDOS ALDANY ---
+
+window.eliminarRegistro = async (route, id) => {
+    // Usamos confirmación para seguridad
+    if (!confirm(`¿Estás seguro de eliminar este registro de la sección ${route}?`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/${route}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert("¡Registro eliminado con éxito! ✅");
+            actualizarVistaPrevia(); // Refrescamos la tabla
+        } else {
+            alert("Error al eliminar el registro.");
+        }
+    } catch (error) {
+        console.error("Error en DELETE:", error);
+    }
+};
+
+
+
 // --- Auth Helpers ---
 const login = async () => await auth0Client.loginWithRedirect();
 const signup = async () => await auth0Client.loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } });
@@ -223,3 +247,4 @@ loginBtn.addEventListener('click', login);
 signupBtn.addEventListener('click', signup);
 
 initAuth0();
+
