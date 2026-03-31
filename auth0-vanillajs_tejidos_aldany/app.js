@@ -55,7 +55,8 @@ async function renderDashboard() {
     : `<div style="width: 45px; height: 45px; border-radius: 50%; background: #00ff88; color: #1a1e27; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid #fff;">${iniciales}</div>`;
 
   app.innerHTML = `
-    <div class="main-card-wrapper" style="max-width: 1000px; width: 95%; padding: 2rem;">
+    <div class="main-card-wrapper" style="max-width: 1000px; width: 95%; padding: 2rem; margin: 0 auto;">
+
       <header style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid #2d313c; padding-bottom: 1.5rem; margin-bottom: 2rem;">
         <div style="display: flex; align-items: center; gap: 1rem;">
           <img src="${LOGO_PATH}" style="width: 60px;">
@@ -70,7 +71,7 @@ async function renderDashboard() {
         </div>
       </header>
 
-      <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; width: 100%;">
+      <main style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%;">
         
         <section class="action-card" style="padding: 2rem; background: #1a1e27; border: 1px solid #2d313c; border-radius: 12px;">
           <h3 style="color: #00ff88; margin-bottom: 1.5rem; text-align: left;">Registrar Usuario en DB</h3>
@@ -96,10 +97,14 @@ async function renderDashboard() {
 
       </main>
 
-      <section style="margin-top: 2rem; background: #1a1e27; padding: 1.5rem; border-radius: 12px; border: 1px solid #2d313c;">
-          <h4 style="color: #a0aec0; margin-bottom: 1rem;">Estado de la Base de Datos</h4>
-          <div id="db-preview" style="color: #718096; font-size: 0.85rem;">Sincronizando...</div>
-      </section>
+<section style="margin-top: 2rem; background: #1a1e27; padding: 2rem; border-radius: 12px; border: 1px solid #2d313c; width: 100%; box-sizing: border-box; clear: both;">
+    <h4 style="color: #00ff88; margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid #2d313c; padding-bottom: 0.5rem;">
+        Estado de la Base de Datos
+    </h4>
+    <div id="db-preview" style="color: #e2e8f0; font-size: 0.9rem; width: 100%;">
+        <span style="color: #718096; animation: pulse 1.5s infinite;">Sincronizando con tejidos_aldany_db...</span>
+    </div>
+</section>
     </div>
   `;
 
@@ -247,23 +252,23 @@ async function actualizarVistaPrevia() {
 // --- FUNCIONES GLOBALES PARA TEJIDOS ALDANY ---
 
 window.eliminarRegistro = async (route, id) => {
-    // Usamos confirmación para seguridad
-    if (!confirm(`¿Estás seguro de eliminar este registro de la sección ${route}?`)) return;
+  // Usamos confirmación para seguridad
+  if (!confirm(`¿Estás seguro de eliminar este registro de la sección ${route}?`)) return;
 
-    try {
-        const response = await fetch(`${API_URL}/${route}/${id}`, {
-            method: 'DELETE'
-        });
+  try {
+    const response = await fetch(`${API_URL}/${route}/${id}`, {
+      method: 'DELETE'
+    });
 
-        if (response.ok) {
-            alert("¡Registro eliminado con éxito! ✅");
-            actualizarVistaPrevia(); // Refrescamos la tabla
-        } else {
-            alert("Error al eliminar el registro.");
-        }
-    } catch (error) {
-        console.error("Error en DELETE:", error);
+    if (response.ok) {
+      alert("¡Registro eliminado con éxito! ✅");
+      actualizarVistaPrevia(); // Refrescamos la tabla
+    } else {
+      alert("Error al eliminar el registro.");
     }
+  } catch (error) {
+    console.error("Error en DELETE:", error);
+  }
 };
 
 

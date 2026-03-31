@@ -72,7 +72,7 @@ body {
   align-items: center;
   gap: 2rem;
   padding: 2.5rem;
-  max-width: 550px; /* Un poco más ancho para el formulario */
+  max-width: 1000px; /* Un poco más ancho para el formulario */
   width: 95%;
   height: auto; 
   animation: fadeInScale 0.8s ease-out forwards;
