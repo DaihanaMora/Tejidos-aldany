@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
+  "scripts": {
     "server": "node server.js",
     "client": "vite",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
