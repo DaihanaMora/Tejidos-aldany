@@ -182,13 +182,17 @@ async function actualizarVistaPrevia() {
             html += `<tr><td colspan="3" style="padding: 20px; text-align: center; color: #718096;">No hay usuarios registrados</td></tr>`;
         } else {
             users.forEach(user => {
+              const nombre = user.nombre || user.Nombre || 'Sin nombre';
+              const rol = user.rol || user.Rol || 'Sin rol';
+              const id = user.idusuario || user.idUsuario || user.id;
+
                 html += `
                     <tr style="border-bottom: 1px solid #2d313c;">
-                        <td style="padding: 10px;">${user.Nombre}</td>
-                        <td style="padding: 10px;"><span style="color: #00ff88;">${user.Rol}</span></td>
+                        <td style="padding: 10px;">${nombre}</td>
+                        <td style="padding: 10px;"><span style="color: #00ff88;">${rol}</span></td>
                         <td style="padding: 10px; text-align: center;">
-                            <button onclick="window.eliminarRegistro('usuarios', ${user.idUsuario})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
-                            <button onclick="window.editarRegistro('usuarios', ${user.idUsuario}, '${user.Nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
+                            <button onclick="window.eliminarRegistro('usuarios', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
+                            <button onclick="window.editarRegistro('usuarios', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
                         </td>
                     </tr>`;
             });
