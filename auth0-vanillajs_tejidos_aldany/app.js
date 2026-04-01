@@ -14,6 +14,7 @@ const API_URL = 'http://localhost:3000/api';
 async function initAuth0() {
   try {
     showLoading();
+
     auth0Client = await createAuth0Client({
       domain: import.meta.env.VITE_AUTH0_DOMAIN,
       clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
@@ -196,7 +197,7 @@ async function actualizarVistaPrevia() {
                 <td style="padding: 10px;"><span style="color: #00ff88;">${rol}</span></td>
                 <td style="padding: 10px; text-align: center;">
                     <button onclick="window.eliminarRegistro('usuarios', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
-                    <button onclick="window.editarRegistro('usuarios', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
+                    <button onclick="window.editarRegistro('usuarios', ${id}, '${nombre}', '${rol}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
                 </td>
             </tr>`;
       });
@@ -230,7 +231,7 @@ async function actualizarVistaPrevia() {
                 <td style="padding: 10px;"><span style="color: #00ff88;">${contacto}</span></td>
                 <td style="padding: 10px; text-align: center;">
                     <button onclick="window.eliminarRegistro('clientes', ${id})" style="background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; margin-right: 5px; font-size: 0.7rem;">BORRAR</button>
-                    <button onclick="window.editarRegistro('clientes', ${id}, '${nombre}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
+                    <button onclick="window.editarRegistro('clientes', ${id}, '${nombre}',null,'${contacto}')" style="background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 0.7rem;">EDITAR</button>
                 </td>
             </tr>`;
       });
@@ -263,11 +264,47 @@ window.eliminarRegistro = async (route, id) => {
     if (response.ok) {
       alert("¡Registro eliminado con éxito! ✅");
       actualizarVistaPrevia(); // Refrescamos la tabla
+    } 
+  } catch (error) {
+    alert(`Error al eliminar el usuario`)
+    console.error("Error en DELETE:", error);
+  }
+};
+
+window.editarRegistro = async(route, id, nombre, rol,contacto) => {
+  const nuevoNombre = prompt('Editar nombre:', nombre);
+  let nuevoRol
+  let nuevoContacto
+  const body = {}
+  if(rol){
+    nuevoRol = prompt('Editar rol del usuario', rol);
+    
+    if(!nuevoRol) return
+    body.Rol = nuevoRol
+  }
+  if(contacto) {
+    nuevoContacto = prompt('Editar contacto',nombre)
+    if(!nuevoContacto) return
+    body.contacto= nuevoContacto
+  }
+  if (!nuevoNombre) return;
+  nuevoRol ? body.Nombre = nuevoNombre : body.nombre = nuevoNombre
+  try {
+    const response = await fetch(`${API_URL}/${route}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      alert("¡Usuario editado con éxito! ✅");
+      actualizarVistaPrevia();
     } else {
-      alert("Error al eliminar el registro.");
+      alert("Error al editar el usuario");
     }
   } catch (error) {
-    console.error("Error en DELETE:", error);
+    alert(`Error al editar el usuario: ${error.message}`);
+    console.error("Error en editarRegistro:", error);
   }
 };
 
