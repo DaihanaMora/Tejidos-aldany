@@ -8,7 +8,7 @@ const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
 
 let auth0Client;
-const LOGO_PATH = './imgs/logo.png';
+const LOGO_PATH = './src/assets/imgs/logo.png';
 const API_URL = 'http://localhost:3000/api';
 
 async function initAuth0() {
