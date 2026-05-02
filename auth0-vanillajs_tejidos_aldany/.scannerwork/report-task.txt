@@ -1,0 +1,6 @@
+projectKey=Tejidos-aldany
+serverUrl=http://localhost:9000
+serverVersion=26.4.0.121862
+dashboardUrl=http://localhost:9000/dashboard?id=Tejidos-aldany
+ceTaskId=743145f2-95cc-4fe3-a550-945bb2110299
+ceTaskUrl=http://localhost:9000/api/ce/task?id=743145f2-95cc-4fe3-a550-945bb2110299

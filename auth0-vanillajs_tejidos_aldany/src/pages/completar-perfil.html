@@ -22,8 +22,8 @@
             <div style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
                 
                 <div style="text-align: left;">
-                    <label style="font-size: 0.8rem; color: #718096;">Tipo de Documento</label>
-                    <select name="tipo_doc" required 
+                    <label for="tipo_doc" style="font-size: 0.8rem; color: #718096;">Tipo de Documento</label>
+                    <select id="tipo_doc" name="tipo_doc" required 
                         style="width: 100%; padding: 12px; background: #0a0a0f; border: 1px solid #4a5568; color: white; border-radius: 10px; margin-top: 5px;">
                         <option value="CC">Cédula de Ciudadanía (CC)</option>
                         <option value="CE">Cédula de Extranjería (CE)</option>
@@ -33,8 +33,8 @@
                 </div>
 
                 <div style="text-align: left;">
-                    <label style="font-size: 0.8rem; color: #718096;">Número de Documento</label>
-                    <input type="text" name="num_doc" placeholder="Ej: 10203040" required
+                    <label for="num_doc" style="font-size: 0.8rem; color: #718096;">Número de Documento</label>
+                    <input id="num_doc" type="text" name="num_doc" placeholder="Ej: 10203040" required
                         style="width: 100%; padding: 12px; background: #0a0a0f; border: 1px solid #4a5568; color: white; border-radius: 10px; margin-top: 5px;">
                 </div>
 
@@ -54,7 +54,7 @@
         try {
             // Decodificar el nombre de Pepito
             const base64Url = sessionToken.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const base64 = base64Url.replaceAll(/-/g, '+').replaceAll(/_/g, '/');
             const payload = JSON.parse(window.atob(base64));
 
             document.getElementById('user-name').innerText = payload.preferred_name || "Usuario";
